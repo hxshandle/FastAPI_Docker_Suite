@@ -1,0 +1,48 @@
+version: "3.7"
+services:
+
+  nginx:
+    build:
+      context: ./nginx
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+      - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
+      - ${NGINX_SITES_PATH}:/etc/nginx/sites-available
+      - ${NGINX_SSL_PATH}:/etc/nginx/ssl
+    depends_on:
+      - uvicorn-gunicorn-fastapi
+    ports:
+      - 80:80
+    networks:
+      - frontend
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 27017:27017
+    networks:
+      - frontend
+
+  uvicorn-gunicorn-fastapi:
+    build:
+      context: ./uvicorn-gunicorn-fastapi
+    volumes:
+      - ${FASTAPI_APP_PATH}:/app
+    expose:
+      - 80
+    networks:
+      - frontend
+
+
+
+
+
+networks:
+  frontend:
+
+volumes:
+  db-data:
