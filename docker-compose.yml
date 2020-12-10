@@ -11,6 +11,7 @@ services:
       - ${NGINX_SSL_PATH}:/etc/nginx/ssl
     depends_on:
       - uvicorn-gunicorn-fastapi
+      - plantuml-server
     ports:
       - 80:80
     networks:
@@ -32,10 +33,18 @@ services:
       context: ./uvicorn-gunicorn-fastapi
     volumes:
       - ${FASTAPI_APP_PATH}:/app
+      - ${APP_CODE_PATH_HOST}:/data/workspace
     expose:
       - 80
     networks:
       - frontend
+
+  plantuml-server:
+    image: plantuml/plantuml-server
+    expose:
+    - 8080
+    networks:
+    - frontend
 
 
 
